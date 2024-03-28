@@ -31,6 +31,8 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [content, setContent] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [searchText, setSearchText] = useState<string>('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [meta, setMeta] = useState<Meta>({
     itemCount: 0,
     page: 1,
@@ -73,17 +75,11 @@ export default function Home() {
   }, [meta.page, meta.search, meta.tags, meta.take]);
 
   const onSearchChange = (value: string) => {
-    setMeta({
-      ...meta,
-      search: value,
-    });
+    setSearchText(value);
   };
 
-  const handleChange = (value: string | string[]) => {
-    setMeta({
-      ...meta,
-      tags: Array(value).join(','),
-    });
+  const handleChange = (value: string[]) => {
+    setSelectedTags(value);
   };
 
   const handlePageChange = (pagination: any) => {
@@ -91,6 +87,14 @@ export default function Home() {
       ...meta,
       page: pagination.current,
       take: pagination.pageSize,
+    });
+  };
+
+  const handleSearch = () => {
+    setMeta({
+      ...meta,
+      search: searchText,
+      tags: selectedTags.length > 0 ? selectedTags.join(',') : undefined,
     });
   };
 
@@ -197,6 +201,9 @@ export default function Home() {
                       options={tagList}
                       allowClear
                     />
+                    <Button type='primary' onClick={handleSearch}>
+                      Search
+                    </Button>
                   </Space>
                 }
               >
